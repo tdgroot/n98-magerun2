@@ -2,6 +2,12 @@
 
 namespace N98\Magento\Command\Customer;
 
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Api\Data\CustomerSearchResultsInterface;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteria;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,6 +16,36 @@ use N98\Util\Console\Helper\Table\Renderer\RendererFactory;
 
 class ListCommand extends AbstractCustomerCommand
 {
+    /**
+     * @var CustomerRepositoryInterface
+     */
+    private $customerRepository;
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
+    /**
+     * @var FilterBuilder
+     */
+    private $filterBuilder;
+
+    /**
+     * @param CustomerRepositoryInterface $customerRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param FilterBuilder $filterBuilder
+     */
+    public function __construct(
+        CustomerRepositoryInterface $customerRepository = null,
+        SearchCriteriaBuilder $searchCriteriaBuilder = null,
+        FilterBuilder $filterBuilder = null
+    ) {
+        parent::__construct();
+
+        $this->customerRepository = $customerRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->filterBuilder = $filterBuilder;
+    }
+
     protected function configure()
     {
         $this
@@ -45,15 +81,19 @@ HELP;
             $search = $input->getArgument('search');
         }
 
+        $customers = $this->getCustomerList($search);
+
         $table = [];
-        foreach ($this->getCustomerList($search) as $index) {
+        /** @var CustomerInterface[] $items */
+        $items = $customers->getItems();
+        foreach ($items as $customer) {
             $table[] = [
-                $index['id'],
-                $index['firstname'],
-                $index['lastname'],
-                $index['email'],
-                $index['website'],
-                $index['created_at'],
+                'id'         => $customer->getId(),
+                'email'      => $customer->getEmail(),
+                'firstname'  => $customer->getFirstname(),
+                'lastname'   => $customer->getLastname(),
+                'website'    => $customer->getWebsiteId(),
+                'created_at' => $customer->getCreatedAt(),
             ];
         }
 
@@ -66,4 +106,74 @@ HELP;
             $output->writeln('<comment>No customers found</comment>');
         }
     }
+
+    /**
+     * @param string $search
+     *
+     * @return CustomerSearchResultsInterface
+     */
+    protected function getCustomerList($search = null)
+    {
+        // Prepare Search
+        if ($search !== null) {
+            $this->getFilterBuilder()->setField('email');
+            $this->getFilterBuilder()->setConditionType('like');
+            $this->getFilterBuilder()->setValue('%' . $search . '%');
+            $emailFilter = $this->getFilterBuilder()->create();
+
+            $this->getFilterBuilder()->setField('firstname');
+            $this->getFilterBuilder()->setConditionType('like');
+            $this->getFilterBuilder()->setValue('%' . $search . '%');
+            $firstNameFilter = $this->getFilterBuilder()->create();
+
+            $this->getFilterBuilder()->setField('lastname');
+            $this->getFilterBuilder()->setConditionType('like');
+            $this->getFilterBuilder()->setValue('%' . $search . '%');
+            $lastnameFilter = $this->getFilterBuilder()->create();
+
+            $this->getSearchCriteriaBuilder()->addFilter([$emailFilter, $firstNameFilter, $lastnameFilter]);
+        }
+
+        // Create SearchCriteria Object
+        $searchCriteria = $this->getSearchCriteriaBuilder()->create();
+
+        // Search for Customers
+        $customers = $this->getCustomerRepository()->getList($searchCriteria);
+
+        return $customers;
+    }
+
+    /**
+     * @return CustomerRepositoryInterface
+     */
+    public function getCustomerRepository()
+    {
+        if($this->customerRepository===null){
+            $this->customerRepository = $this->getObjectManager()->create(CustomerRepositoryInterface::class);
+        }
+        return $this->customerRepository;
+    }
+
+    /**
+     * @return FilterBuilder
+     */
+    public function getFilterBuilder()
+    {
+        if($this->filterBuilder===null){
+            $this->filterBuilder = $this->getObjectManager()->create(FilterBuilder::class);
+        }
+        return $this->filterBuilder;
+    }
+
+    /**
+     * @return SearchCriteriaBuilder
+     */
+    public function getSearchCriteriaBuilder()
+    {
+        if($this->searchCriteriaBuilder===null){
+            $this->searchCriteriaBuilder = $this->getObjectManager()->create(SearchCriteriaBuilder::class);
+        }
+        return $this->searchCriteriaBuilder;
+    }
+
 }
