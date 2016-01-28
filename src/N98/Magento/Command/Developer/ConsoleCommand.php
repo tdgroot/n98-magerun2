@@ -63,6 +63,7 @@ class ConsoleCommand extends AbstractMagentoCommand
         $shell = new Shell($config);
         $shell->setScopeVariables([
             'di' => $this->getObjectManager(),
+            'magerun' => $this->getApplication(),
         ]);
 
         $commandConfig = $this->getCommandConfig();
