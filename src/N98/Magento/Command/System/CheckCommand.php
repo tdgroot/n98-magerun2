@@ -73,7 +73,6 @@ HELP;
 
         $this->detectMagento($output);
         if ($this->initMagento()) {
-
             $results = new ResultCollection();
 
             foreach ($this->config['checks'] as $checkGroup => $checkGroupClasses) {
@@ -139,7 +138,9 @@ HELP;
 
                     case Result::STATUS_OK:
                     default:
-                        $output->write('<info>' . Charset::convertInteger(Charset::UNICODE_CHECKMARK_CHAR) . '</info> ');
+                        $output->write(
+                            '<info>' . Charset::convertInteger(Charset::UNICODE_CHECKMARK_CHAR) . '</info> '
+                        );
                         break;
                 }
                 $output->writeln($result->getMessage());
@@ -200,17 +201,20 @@ HELP;
     private function _markCheckWarning(ResultCollection $results, $context, $checkGroupClass)
     {
         $result = $results->createResult();
-        $result->setMessage('<error>No ' . $context . ' configured to run store check:</error> <comment>' . basename($checkGroupClass) . '</comment>');
+        $result->setMessage(
+            '<error>No ' . $context . ' configured to run store check:</error> <comment>' .
+            basename($checkGroupClass) . '</comment>'
+        );
         $result->setStatus($result::STATUS_WARNING);
         $results->addResult($result);
     }
 
     /**
      * @param ResultCollection $results
-     * @param $checkGroupClass
-     * @param $check
+     * @param string $checkGroupClass name
+     * @param Check\StoreCheck $check
      */
-    private function checkStores(ResultCollection $results, $checkGroupClass, $check)
+    private function checkStores(ResultCollection $results, $checkGroupClass, Check\StoreCheck $check)
     {
         if (!$stores = $this->storeManager->getStores()) {
             $this->_markCheckWarning($results, 'stores', $checkGroupClass);
@@ -222,10 +226,10 @@ HELP;
 
     /**
      * @param ResultCollection $results
-     * @param $checkGroupClass
-     * @param $check
+     * @param string $checkGroupClass name
+     * @param Check\WebsiteCheck $check
      */
-    private function checkWebsites(ResultCollection $results, $checkGroupClass, $check)
+    private function checkWebsites(ResultCollection $results, $checkGroupClass, Check\WebsiteCheck $check)
     {
         if (!$websites = $this->storeManager->getWebsites()) {
             $this->_markCheckWarning($results, 'websites', $checkGroupClass);

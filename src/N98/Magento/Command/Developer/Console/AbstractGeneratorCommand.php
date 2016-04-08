@@ -7,6 +7,7 @@ use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Module\Dir as ModuleDir;
 use Magento\Framework\Filesystem\Directory\WriteFactory as DirectoryWriteFactory;
 use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
+use N98\Magento\Command\Developer\Console\Exception\NoModuleDefinedException;
 use N98\Magento\Command\Developer\Console\Structure\ModuleNameStructure;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\Code\Generator\FileGenerator;
@@ -63,7 +64,7 @@ abstract class AbstractGeneratorCommand extends AbstractConsoleCommand
             }
 
         } catch (\InvalidArgumentException $e) {
-            throw new \InvalidArgumentException('Module not defined. Please use "module <name>" command');
+            throw new NoModuleDefinedException('Module not defined. Please use "module <name>" command');
         }
 
         return new ModuleNameStructure($currentModuleName);

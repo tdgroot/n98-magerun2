@@ -17,6 +17,7 @@ class MakeBlockCommand extends AbstractGeneratorCommand
     {
         $this
             ->setName('make:block')
+            ->setAliases(['mb'])
             ->addArgument('classpath', InputArgument::REQUIRED)
             ->setDescription('Creates a generic block class')
         ;

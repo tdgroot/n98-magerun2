@@ -18,6 +18,7 @@ class MakeClassCommand extends AbstractGeneratorCommand
     {
         $this
             ->setName('make:class')
+            ->setAliases(['mc'])
             ->addArgument(self::CLASSPATH, InputArgument::REQUIRED)
             ->setDescription('Creates a generic class')
         ;

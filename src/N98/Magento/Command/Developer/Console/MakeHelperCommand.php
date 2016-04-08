@@ -16,6 +16,7 @@ class MakeHelperCommand extends AbstractGeneratorCommand
     {
         $this
             ->setName('make:helper')
+            ->setAliases(['mh'])
             ->addArgument('classpath', InputArgument::REQUIRED)
             ->setDescription('Creates a helper class')
         ;

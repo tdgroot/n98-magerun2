@@ -28,7 +28,7 @@ class ApplicationTest extends TestCase
 
         $versionFromChangelog = preg_match('~^\d+\.\d+\.\d+$~m', $buffer, $matches) ? $matches[0] : null;
 
-        $this->assertEquals(Application::APP_VERSION, $versionFromVersionTxt, 'changes.txt same as APP_VERSION');
+        $this->assertEquals(Application::APP_VERSION, $versionFromVersionTxt, 'version.txt same as APP_VERSION');
         $this->assertEquals(Application::APP_VERSION, $versionFromChangelog, 'CHANGELOG.md same as APP_VERSION');
     }
 
@@ -54,7 +54,7 @@ class ApplicationTest extends TestCase
 
         $configArray = array(
             'autoloaders' => array(
-                'N98MagerunTest' => __DIR__ . '/_ApplicationTestSrc',
+                'N98MagerunTest' => __DIR__ . '/_ApplicationTest/Src',
             ),
             'commands' => array(
                 'customCommands' => array(
@@ -111,7 +111,7 @@ class ApplicationTest extends TestCase
         $injectConfig = array(
             'plugin' => array(
                 'folders' => array(
-                    __DIR__ . '/_ApplicationTestModules'
+                    __DIR__ . '/_ApplicationTest/Modules'
                 )
             )
         );
@@ -136,10 +136,10 @@ class ApplicationTest extends TestCase
                 'vendor' => array(
                     'acme' => array(
                         'magerun-test-module' => array(
-                            'n98-magerun2.yaml' => file_get_contents(__DIR__ . '/_ApplicationTestComposer/n98-magerun2.yaml'),
+                            'n98-magerun2.yaml' => file_get_contents(__DIR__ . '/_ApplicationTest/Composer/n98-magerun2.yaml'),
                             'src' => array(
                                 'Acme' => array(
-                                    'FooCommand.php' => file_get_contents(__DIR__ . '/_ApplicationTestComposer/FooCommand.php'),
+                                    'FooCommand.php' => file_get_contents(__DIR__ . '/_ApplicationTest/Composer/FooCommand.php'),
                                 )
                             )
                         )

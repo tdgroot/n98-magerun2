@@ -18,6 +18,7 @@ class MakeInterfaceCommand extends AbstractGeneratorCommand
     {
         $this
             ->setName('make:interface')
+            ->setAliases(['mi'])
             ->addArgument(self::CLASSPATH, InputArgument::REQUIRED)
             ->setDescription('Creates a generic interface')
         ;

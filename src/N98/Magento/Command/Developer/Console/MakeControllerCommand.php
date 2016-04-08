@@ -16,6 +16,7 @@ class MakeControllerCommand extends AbstractGeneratorCommand
     {
         $this
             ->setName('make:controller')
+            ->setAliases(['ma', 'make:action'])
             ->addArgument('classpath', InputArgument::REQUIRED)
             ->addOption('result', 'r', InputOption::VALUE_OPTIONAL, 'Result type', 'page')
             ->setDescription('Creates a controller action class')
